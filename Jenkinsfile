@@ -16,29 +16,13 @@ pipeline {
          stage('TEST-MANUAL') {
              steps {
                  sh '''cd backend
-                   mvn sonar:sonar \
-                     -Dsonar.projectKey=studentapp \
-                     -Dsonar.projectName='studentapp' \
-                     -Dsonar.host.url=http://54.242.28.230:9000 \
-                       -Dsonar.token=sqp_1bc4acc6e7d8deca719d3b4f4cdf8bda6c4751d0'''
-            }
-         }
-
-        stage ('TEST-JENKINS') {
-            steps {
-                withSonarQubeEnv(installationName: 'sonarqube' , credentialsId: 'sonar-cred') {
-                   sh '''cd backend
-                    mvn sonar:sonar -Dsonar.projectKey=studentapp'''
-                }
-            }
-        }
-        stage ('Quality-Gate') {
-            steps {
-                timeout(10) {
-                    waitForQualityGate abortPipeline: true, credentialsId: 'sonar-cred'
-                }
-        }
-        }
+                 mvn  sonar:sonar \
+                 -Dsonar.projectKey=sonarqube01 \
+                 -Dsonar.projectName='sonarqube01' \
+                 -Dsonar.host.url=http://54.242.28.230:9000 \
+                 -Dsonar.token=sqp_3f25694c956d24d9366f3d8ed0835dfb07e621d7'''
+             }
+         }           
         stage('DEPLOY') {
             steps {
                 echo 'DEPLOY SUCCSESS'
