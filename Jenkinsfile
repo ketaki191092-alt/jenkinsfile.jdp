@@ -1,25 +1,51 @@
 pipeline {
     agent any
     stages {
-        stage ('PULL') {
+        stage ('PULL'){
             steps {
-                git branch: 'main', url: 'https://github.com/mukundDeo9325/CDEC-studentapp.git'
+                git branch: 'devops', url: 'https://github.com/jambhulkarcloudblitz-alt/CDEC-studentapp.git'
             }
         }
-        stage ('BUILD') {
+        stage ('BUILD'){
             steps {
-                echo "BUILD SUCCESS"
+                sh '''cd backend 
+                    mvn clean package -DskipTests'''
             }
         }
-        stage ('TEST') {
+        
+        // stage ('TEST') {
+        //     steps {
+        //       sh '''cd backend
+                mvn sonar:sonar \
+                -Dsonar.projectKey=sonar \
+                -Dsonar.projectName=sonar \
+                -Dsonar.host.url=http://54.242.28.230:9000 \
+                -Dsonar.token=sqp_1bc4acc6e7d8deca719d3b4f4cdf8bda6c4751d0
+        //     }
+        // }
+
+        // stage ('TEST') {
+        //     steps {
+        //         withSonarQubeEnv(installationName: 'sonarqube' ,credentialsId: 'sonar-cred') {
+        //          sh '''cd backend
+        //           mvn sonar:sonar -Dsonar.projectKey=studentapp'''
+        //         }
+        //     }
+        // }
+
+        stage ('Test') {
             steps {
-                echo "TEST SUCCESS"
+                withSonarQubeEnv(installationName: 'sonarqube' ,credentialsId: 'sonar-cred') {
+                    sh '''cd backend
+                  mvn sonar:sonar -Dsonar.projectKey=studentapp'''
+                    }
             }
         }
-        stage ('DEPLOY') {
+        stage ('Quality-Gate') {
             steps {
-                echo "DEPLOY SUCCESS"
+                timeout(10) {
+                        waitForQualityGate abortPipeline: true, credentialsId: 'sonar-cred'
+                    }
+                
             }
         }
-    }
-}
