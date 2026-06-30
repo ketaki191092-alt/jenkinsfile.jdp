@@ -23,9 +23,9 @@ pipeline {
                  -Dsonar.token=sqp_3f25694c956d24d9366f3d8ed0835dfb07e621d7'''
              }
          }           
-        stage('DEPLOY') {
+        stage('S3 UPLOAD') {
             steps {
-                echo 'DEPLOY SUCCSESS'
+                sh 'aws s3 cp backend/target/student-registration-backend-0.0.1-SNAPSHOT.jar s3://ketakicv.shop/key'
             }
         }
     }
